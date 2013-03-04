@@ -9,8 +9,8 @@ public class ConnectionManager extends Thread
 	boolean connectionRunning = false;
 	ServerSocket socket = null;
 	ServerConfigurationManager config = null;
-	private CRAMTheServer server = null;
-	public ConnectionManager(CRAMTheServer serv) throws IOException
+	private SupercramServer server = null;
+	public ConnectionManager(SupercramServer serv) throws IOException
 	{
 		config = serv.getConfiguration();
 		connectionRunning = true;

@@ -5,11 +5,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerConfigurationManager
 {
-	
 	public ServerConfigurationManager(File file)
 	{
 		if(file==null)
@@ -18,6 +19,8 @@ public class ServerConfigurationManager
 			file.mkdir();
 		if(!file.isDirectory())
 			throw new IllegalArgumentException("Server path is not directory");
+		serverPath = file;
+		
 		File propsFile = new File(file,"server.properties");
 		if(!propsFile.exists())
 			createPropsFile(propsFile);
@@ -118,5 +121,26 @@ public class ServerConfigurationManager
 		return 3;
 		
 	}
-	
+	File serverPath = null;
+	public File getDataFolder()
+	{
+		File f = null;
+		synchronized(serverPath)
+		{
+			f = new File(serverPath, ".");
+		}
+		return f;
+	}
+	public File[] getWorldFiles()
+	{
+		List<File> files = new ArrayList<File>(1);
+		synchronized(serverPath)
+		{
+			File worldsFolder = new File(serverPath, "worlds");
+			for(File file : worldsFolder.listFiles())
+				if(file.exists() && !file.isDirectory() && file.canRead() && file.getName().endsWith(".scw"))
+					files.add(file);
+		}
+		return (File[])files.toArray();
+	}
 }

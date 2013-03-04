@@ -15,8 +15,8 @@ public class NetLoginHandler extends Thread
 {
 	Socket socket = null;
 	boolean deleted = false;
-	CRAMTheServer server = null;
-	public NetLoginHandler(CRAMTheServer serv, Socket s)
+	SupercramServer server = null;
+	public NetLoginHandler(SupercramServer serv, Socket s)
 	{
 		server=serv;
 		socket=s;
@@ -76,7 +76,7 @@ public class NetLoginHandler extends Thread
 						Packet5LoginSucess p4ls=new Packet5LoginSucess();
 						p = p4ls;
 						NetServerHandler nsh = new NetServerHandler(server, socket, p2l.username);
-						CRAMTheServer.pendingConnections.add(nsh);
+						SupercramServer.pendingConnections.add(nsh);
 					}
 					else
 					{

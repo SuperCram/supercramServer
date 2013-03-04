@@ -8,8 +8,7 @@ public class TagStaticList extends Tag
 {
 	public TagStaticList()
 	{
-		id=(byte)6;
-		tags = new Tag[0];
+		this(null);
 	}
 	public TagStaticList(Tag[] t)
 	{
@@ -42,5 +41,8 @@ public class TagStaticList extends Tag
 	}
 	public Tag get(int i) {
 		return tags[i];
+	}
+	public Tag[] get() {
+		return tags;
 	}
 }

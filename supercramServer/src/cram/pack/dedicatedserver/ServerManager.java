@@ -12,10 +12,10 @@ public class ServerManager
 	{
 		if(args.length==0)
 		{
-			System.out.println("Must specify server launchfile: java -jar cramtheserver.jar BasicServer --nothreading");
+			System.out.println("Must specify server launchfile: java -jar cramtheserver.jar BasicServer [--nothreading]");
 			return;
 		}
-		List<CRAMTheServer> servers = new LinkedList<CRAMTheServer>();
+		List<SupercramServer> servers = new LinkedList<SupercramServer>();
 		boolean noThread = true;
 		for(int i=0;i<args.length;i++)
 		{
@@ -26,9 +26,8 @@ public class ServerManager
 			}
 			try
 			{
-				
 				ServerConfigurationManager cfg = new ServerConfigurationManager(new File(".",args[i]));
-				servers.add(new CRAMTheServer(cfg));
+				servers.add(new SupercramServer(cfg));
 			}
 			catch(ServerFailedToStartException e)
 			{
@@ -54,7 +53,7 @@ public class ServerManager
 		}
 		if(!noThread)
 		{
-			Iterator<CRAMTheServer> servI = servers.iterator();
+			Iterator<SupercramServer> servI = servers.iterator();
 			while(servI.hasNext())
 				servI.next().start();
 		}

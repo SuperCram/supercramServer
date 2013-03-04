@@ -22,9 +22,9 @@ public class NetServerHandler
 	String username = "";
 	public NetServerHandler(){}
 	Player player = null;
-	CRAMTheServer server = null;
+	SupercramServer server = null;
 	Socket socket = null;
-	public NetServerHandler(CRAMTheServer pServer,Socket pSocket,String pUsername)
+	public NetServerHandler(SupercramServer pServer,Socket pSocket,String pUsername)
 	{
 		server = pServer;
 		socket = pSocket;
@@ -123,5 +123,15 @@ public class NetServerHandler
 	{
 		config_max_ping = Math.min(1, Math.max(60, server.getConfiguration().getInt("max-ping", 10)));
 		config_packet_read_count = Math.min(5, Math.max(60, server.getConfiguration().getInt("packet-read-count", 5)));
+	}
+	Weapon currentWeapon = null;
+	// Weapons
+	public void changeWeapon(Weapon weap)
+	{
+		if(currentWeapon!=weap)
+		{
+			currentWeapon = weap;
+			// currentWorld.sendPacketToPlayers(new Packet#WeaponChange(weap.getID()));
+		}
 	}
 }

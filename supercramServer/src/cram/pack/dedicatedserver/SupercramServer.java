@@ -1,14 +1,15 @@
 package cram.pack.dedicatedserver;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class CRAMTheServer extends Thread
+public class SupercramServer extends Thread
 {
-	public CRAMTheServer(ServerConfigurationManager cfg) throws IOException
+	public SupercramServer(ServerConfigurationManager cfg) throws IOException
 	{
 		config=cfg;
 		manager = new ConnectionManager(this);
@@ -20,6 +21,7 @@ public class CRAMTheServer extends Thread
 	private LinkedList<NetServerHandler> players = new LinkedList<NetServerHandler>();
 	public void run()
 	{
+		loadWorlds();
 		while(!ShutdownServer)
 		{
 			handleIncomingConnections();
@@ -86,5 +88,16 @@ public class CRAMTheServer extends Thread
 		for(World w : worlds)
 			w.tick();
 	}
-	public static ConcurrentLinkedQueue<NetServerHandler> pendingConnections = new ConcurrentLinkedQueue<NetServerHandler>(); 
+	public static ConcurrentLinkedQueue<NetServerHandler> pendingConnections = new ConcurrentLinkedQueue<NetServerHandler>();
+	private void loadWorlds()
+	{
+		File[] worldFiles = config.getWorldFiles();
+		for(File worldFile : worldFiles)
+		{
+			World w = null;
+			try{w = new World(worldFile);}catch(Exception e){}
+			if(w!=null)
+				worlds.add(w);
+		}
+	}
 }

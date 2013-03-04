@@ -1,10 +1,13 @@
 package cram.pack.dedicatedserver;
 
 import java.awt.Rectangle;
-import java.util.Iterator;
 
 public class Entity
 {
+	public boolean collidesWith(Entity ent)
+	{
+		return ent.aabb.intersects(aabb);
+	}
 	double motX = 0;
 	double motY = 0;
 	boolean clipping = true;
@@ -23,16 +26,14 @@ public class Entity
 	public boolean[] update()
 	{
 		if(gravity)
-			motY += world.gravity;
+			motY += world.getGravity();
 		boolean hitH = false;
 		boolean hitV = false;
 		onGround = false;
 		if(motX!=0 && motY!=0)
 		{
-			Iterator<WorldSprite> spr = world.clipIterator();
-			while(spr.hasNext())
+			for(WorldSprite sprite : world.getClips())
 			{
-				WorldSprite sprite = spr.next();
 				if(sprite.aabb.intersects(aabb.x+motX, aabb.y, aabb.width, aabb.height))
 				{
 					hitH = true;
