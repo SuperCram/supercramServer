@@ -26,6 +26,7 @@ public class ServerManager
 			}
 			try
 			{
+				
 				ServerConfigurationManager cfg = new ServerConfigurationManager(new File(".",args[i]));
 				servers.add(new CRAMTheServer(cfg));
 			}
@@ -42,6 +43,7 @@ public class ServerManager
 			catch(Exception e)
 			{
 				System.out.println("Couldn't load config for "+args[i]);
+				e.printStackTrace();
 				continue;
 			}
 		}

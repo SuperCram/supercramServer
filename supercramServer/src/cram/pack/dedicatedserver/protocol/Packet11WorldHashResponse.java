@@ -6,16 +6,18 @@ import java.io.IOException;
 
 import cram.pack.dedicatedserver.NetServerHandler;
 
-public class Packet10WorldHashRequest extends Packet
+public class Packet11WorldHashResponse extends Packet
 {
 	public String worldName;
-	public Packet10WorldHashRequest()
+	public String worldHash;
+	public Packet11WorldHashResponse()
 	{
-		this("");
+		this("","");
 	}
-	public Packet10WorldHashRequest(String name)
+	public Packet11WorldHashResponse(String pWorldName, String pWorldHash)
 	{
-		worldName = name;
+		worldName = pWorldName;
+		worldHash = pWorldHash;
 	}
 	@Override
 	void read(DataInputStream dis) throws IOException {
@@ -23,6 +25,10 @@ public class Packet10WorldHashRequest extends Packet
 		int len = dis.readInt();
 		for(int i=0;i<len;i++)
 			worldName+=dis.readChar();
+		worldHash = "";
+		len = dis.readInt();
+		for(int i=0;i<len;i++)
+			worldHash+=dis.readChar();
 	}
 
 	@Override
@@ -30,11 +36,13 @@ public class Packet10WorldHashRequest extends Packet
 		dos.writeInt(worldName.length());
 		for(int i=0;i<worldName.length();i++)
 			dos.writeChar(worldName.charAt(i));
+		dos.writeInt(worldHash.length());
+		for(int i=0;i<worldHash.length();i++)
+			dos.writeChar(worldHash.charAt(i));
 	}
 
 	@Override
 	public void handle(NetServerHandler handler) {
 		handler.handle(this);
 	}
-	
 }

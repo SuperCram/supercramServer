@@ -11,16 +11,15 @@ public class Packet2Login extends Packet
 	public Packet2Login() {
 		PacketID=2;
 	}
-	public int MyVersion;
-	public int ProtocolVersion;
+	public int myVersion = 1;
+	public int protocolVersion = 1;
 	public String username = "";
 	public String password = "";
 	@Override
 	void read(DataInputStream dis) throws IOException
 	{
-		super.read(dis);
-		MyVersion = dis.readInt();
-		ProtocolVersion = dis.readInt();
+		myVersion = dis.readInt();
+		protocolVersion = dis.readInt();
 		int lu = dis.readInt();
 		username="";
 		for(int i=0;i<lu;i++)
@@ -31,10 +30,10 @@ public class Packet2Login extends Packet
 			password+=dis.readChar();
 	}
 	@Override
-	void write(DataOutputStream dos) throws IOException {
-		super.write(dos);
-		dos.writeInt(MyVersion);
-		dos.writeInt(ProtocolVersion);
+	void write(DataOutputStream dos) throws IOException
+	{
+		dos.writeInt(myVersion);
+		dos.writeInt(protocolVersion);
 		dos.writeInt(username.length());
 		for(int i=0;i<username.length();i++)
 			dos.writeChar(username.charAt(i));
@@ -44,6 +43,6 @@ public class Packet2Login extends Packet
 	}
 	@Override
 	public void handle(NetServerHandler handler) {
-		handler.handlePacket2Login(this);
+		handler.handle(this);
 	}
 }

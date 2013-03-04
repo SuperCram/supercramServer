@@ -1,18 +1,16 @@
 package cram.pack.dedicatedserver;
 
+import java.awt.Rectangle;
 import java.util.HashMap;
 
-import cram.pack.dedicatedserver.ser.TagBool;
-import cram.pack.dedicatedserver.ser.TagInt;
-import cram.pack.dedicatedserver.ser.TagMap;
-import cram.pack.dedicatedserver.ser.TagStaticList;
+import cram.pack.dedicatedserver.cereal.TagBool;
+import cram.pack.dedicatedserver.cereal.TagInt;
+import cram.pack.dedicatedserver.cereal.TagMap;
+import cram.pack.dedicatedserver.cereal.TagStaticList;
 
 public class WorldSprite
 {
-	int x = 0;
-	int y = 0;
-	int width = 0;
-	int height = 0;
+	Rectangle aabb = null;
 	boolean collide = false;
 	boolean trigger = false;
 	HashMap<String,String> params = new HashMap<String,String>();
@@ -20,10 +18,9 @@ public class WorldSprite
 	{
 		WorldSprite ws = new WorldSprite();
 		TagStaticList AABB = ((TagStaticList)sprite.get("aabb"));
-		ws.y = ((TagInt)AABB.get(0)).get();
-		ws.x = ((TagInt)AABB.get(1)).get();
-		ws.width = ((TagInt)AABB.get(2)).get();
-		ws.height = ((TagInt)AABB.get(3)).get();
+		int x = ((TagInt)AABB.get(0)).get();
+		int y = ((TagInt)AABB.get(1)).get();
+		ws.aabb = new Rectangle(x,y,x+((TagInt)AABB.get(2)).get(),y+((TagInt)AABB.get(3)).get());
 		
 		ws.collide = ((TagBool)sprite.get("collisions")).get();
 		ws.trigger = ((TagBool)sprite.get("trigger")).get();

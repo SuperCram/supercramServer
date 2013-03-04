@@ -1,4 +1,4 @@
-package cram.pack.dedicatedserver.ser;
+package cram.pack.dedicatedserver.cereal;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -7,10 +7,15 @@ import java.io.IOException;
 public class Tag
 {
 	byte id = 0;
+	public void writeAll(DataOutputStream dos) throws IOException {
+		dos.writeByte(id);
+		write(dos);
+	}
+	
 	public Tag(){}
 	public void read(DataInputStream dis) throws IOException {}
 	public void write(DataOutputStream dos) throws IOException {}
-	public static Tag readTag(DataInputStream dis) throws IOException
+	public static Tag createTag(DataInputStream dis) throws IOException
 	{
 		switch(dis.readByte())
 		{
@@ -28,6 +33,14 @@ public class Tag
 			return new TagStaticList();
 		}
 		return null;
+	}
+	public static Tag readTag(DataInputStream dis) throws IOException
+	{
+		Tag t = createTag(dis);
+		if(t==null)
+			return null;
+		t.read(dis);
+		return t;
 	}
 	public static Tag makeTag(Object value) {
 		if(value instanceof String)

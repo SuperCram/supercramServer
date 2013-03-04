@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import cram.pack.dedicatedserver.NetServerHandler;
 
-public class Packet
+public abstract class Packet
 {
 	public int PacketID = -1;
 	public static Packet readPacket(byte b)
@@ -20,11 +20,11 @@ public class Packet
 		case 2:
 			return new Packet2Login();
 		case 3:
-			return new Packet3LoginFailed();
+			return new Packet3Kick();
 		case 4:
-			return new Packet4LoginSucess();
+			return new Packet4Logout();
 		case 5:
-			return new Packet5Kick();
+			return new Packet5LoginSucess();
 		case 6:
 			return new Packet6KeepAlive();
 		default:
@@ -40,7 +40,7 @@ public class Packet
 		write(dos);
 	}
 	
-	void read(DataInputStream dis)throws IOException{}
-	void write(DataOutputStream dos)throws IOException{}
-	public void handle(NetServerHandler handler){}
+	abstract void read(DataInputStream dis)throws IOException;
+	abstract void write(DataOutputStream dos)throws IOException;
+	public abstract void handle(NetServerHandler handler);
 }

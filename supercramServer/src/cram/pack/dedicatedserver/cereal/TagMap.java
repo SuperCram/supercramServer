@@ -1,4 +1,4 @@
-package cram.pack.dedicatedserver.ser;
+package cram.pack.dedicatedserver.cereal;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -69,7 +69,7 @@ public class TagMap extends Tag
 			String key = "";
 			for(int j=0;j<nextStringSize;j++)
 				key += dis.readChar();
-			Tag nextTag = Tag.readTag(dis);
+			Tag nextTag = Tag.createTag(dis);
 			nextTag.read(dis);
 			tags.put(key, nextTag);
 		}

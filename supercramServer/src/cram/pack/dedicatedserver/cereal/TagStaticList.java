@@ -1,4 +1,4 @@
-package cram.pack.dedicatedserver.ser;
+package cram.pack.dedicatedserver.cereal;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -27,7 +27,7 @@ public class TagStaticList extends Tag
 		tags = new Tag[size];
 		for(int i=0;i<size;i++)
 		{
-			tags[i] = Tag.readTag(dis);
+			tags[i] = Tag.createTag(dis);
 			tags[i].read(dis);
 		}
 	}

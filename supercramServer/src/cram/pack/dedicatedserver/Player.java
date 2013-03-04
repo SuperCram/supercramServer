@@ -2,11 +2,13 @@ package cram.pack.dedicatedserver;
 
 public class Player extends Entity
 {
-	boolean isAdmin = false;
-	String name = "";
-	public Player(String n, boolean ia)
+	boolean onGround = true;
+	boolean facingRight = true;
+	boolean jumping = false;
+	
+	public Player(String n)
 	{
-		isAdmin = ia;
-		name=n;
+		super();
+		
 	}
 }

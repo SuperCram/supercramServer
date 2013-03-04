@@ -6,16 +6,21 @@ import java.io.IOException;
 
 import cram.pack.dedicatedserver.NetServerHandler;
 
-public class Packet0StatusRequest extends Packet{
-	public Packet0StatusRequest() {
-		PacketID=0;
+public class Packet5LoginSucess extends Packet {
+	public Packet5LoginSucess()
+	{
+		PacketID=5;
 	}
-	@Override
-	public void handle(NetServerHandler handler) {
-		handler.handle(this);
+	public Packet5LoginSucess(String reason2) {
+		PacketID=5;
 	}
+	String reason = "";
 	@Override
 	void read(DataInputStream dis) throws IOException {}
 	@Override
 	void write(DataOutputStream dos) throws IOException {}
+	@Override
+	public void handle(NetServerHandler handler) {
+		handler.handle(this);
+	}
 }

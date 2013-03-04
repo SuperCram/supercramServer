@@ -1,4 +1,4 @@
-package cram.pack.dedicatedserver.ser;
+package cram.pack.dedicatedserver.cereal;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -35,7 +35,7 @@ public class TagLinkedList extends Tag
 		linkedTags = new LinkedList<Tag>();
 		for(int i=0;i<size;i++)
 		{
-			Tag t = Tag.readTag(dis);
+			Tag t = Tag.createTag(dis);
 			t.read(dis);
 			linkedTags.add(t);
 		}

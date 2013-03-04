@@ -1,6 +1,8 @@
 package cram.pack.dedicatedserver;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,35 +12,53 @@ public class ServerConfigurationManager
 	
 	public ServerConfigurationManager(File file)
 	{
-		if(file==null || !file.exists())
+		if(file==null)
 			throw new IllegalArgumentException("Server path doesn't exist");
+		if(!file.exists())
+			file.mkdir();
 		if(!file.isDirectory())
 			throw new IllegalArgumentException("Server path is not directory");
 		File propsFile = new File(file,"server.properties");
-		File loginFile = new File(file,"players.db");
 		if(!propsFile.exists())
 			createPropsFile(propsFile);
+		if(!propsFile.exists())
+			throw new IllegalArgumentException("Couldn't create props file");
+		loadProps(propsFile);
 		
+		//File loginFile = new File(file,"players.db");
 	}
 	private void createPropsFile(File propsFile) 
 	{
 		try
 		{
 			FileWriter fw = new FileWriter(propsFile);
-			fw.write("server-ip:");
-			fw.write("server-port:2059");
-			fw.write("server-name:No name :(");
-			fw.write("max-players:5");
+			fw.write("server-ip:\nserver-port:2059\nserver-name:No name :(\nmax-players:5\n");
 			fw.close();
 		}
-		catch(IOException e)
+		catch(IOException e){}
+	}
+	private void loadProps(File propsFile)
+	{
+		try
 		{
-			
+			FileReader fr = new FileReader(propsFile);
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
+			while(line!=null)
+			{
+				if(!line.startsWith("#") && line.length()>2 && line.contains(":"))
+				{
+					String[] lineParts = line.split(":");
+					properties.put(lineParts[0], lineParts[1]);
+				}
+				line = br.readLine();
+			}
+			br.close();
 		}
-		
+		catch(Exception e){}
 	}
 	private ConcurrentHashMap<String,Object> properties = new ConcurrentHashMap<String,Object>();
-	private ConcurrentHashMap<String,Integer> logins = new ConcurrentHashMap<String,Integer>();
+	private ConcurrentHashMap<String,String> logins = new ConcurrentHashMap<String,String>();
 	public String toString(String key)
 	{
 		Object oj = properties.get(key);
@@ -90,11 +110,13 @@ public class ServerConfigurationManager
 	}
 	public byte checkLogin(String username, String password)
 	{
-		Integer b = logins.get(username+password);
-		if(b==null)
-			return 3;
-		else
-			return b.byteValue();
+		String realPassword = logins.get(username);
+		if(realPassword==null)
+			return 1;
+		if(realPassword.equalsIgnoreCase(password))
+			return 2;
+		return 3;
+		
 	}
 	
 }

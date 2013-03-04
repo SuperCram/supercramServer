@@ -3,7 +3,7 @@ package cram.pack.dedicatedserver;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CRAMTheServer extends Thread
@@ -17,7 +17,7 @@ public class CRAMTheServer extends Thread
 	private ServerConfigurationManager config = null;
 	public ConnectionManager getConnectionManager(){return manager;}
 	public ServerConfigurationManager getConfiguration(){return this.config;}
-	private List<NetServerHandler> players = new ArrayList<NetServerHandler>();
+	private LinkedList<NetServerHandler> players = new LinkedList<NetServerHandler>();
 	public void run()
 	{
 		while(!ShutdownServer)
@@ -57,8 +57,8 @@ public class CRAMTheServer extends Thread
 		players.add(nsh);
 	}
 	public final boolean ShutdownServer = false;
-	public final int targetFPS = 35;
-	public final int tickDelay = (int)(((float)1000/targetFPS));
+	public static final int targetFPS = 35;
+	public static final int tickDelay = (int)(((float)1000/targetFPS));
 	private long lastTick = -1;
 	void tickRateManage()
 	{

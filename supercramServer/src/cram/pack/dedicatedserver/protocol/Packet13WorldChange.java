@@ -6,33 +6,31 @@ import java.io.IOException;
 
 import cram.pack.dedicatedserver.NetServerHandler;
 
-public class Packet5Kick extends Packet {
-	public Packet5Kick()
+public class Packet13WorldChange extends Packet
+{
+	public String worldName;
+	public Packet13WorldChange(String pWorldName)
 	{
-		PacketID=5;
+		worldName = pWorldName;
 	}
-	public Packet5Kick(String reason2) {
-		reason=reason2;
-		PacketID=5;
-	}
-	String reason = "";
 	@Override
 	void read(DataInputStream dis) throws IOException {
-		super.read(dis);
-		reason = "";
+		worldName = "";
 		int len = dis.readInt();
 		for(int i=0;i<len;i++)
-			reason += dis.readChar();
+			worldName+=dis.readChar();
 	}
+
 	@Override
 	void write(DataOutputStream dos) throws IOException {
-		super.write(dos);
-		int len = reason.length();
-		for(int i=0;i<len;i++)
-			dos.writeChar(reason.charAt(i));
+		dos.writeInt(worldName.length());
+		for(int i=0;i<worldName.length();i++)
+			dos.writeChar(worldName.charAt(i));
 	}
+
 	@Override
 	public void handle(NetServerHandler handler) {
-		handler.handlePacket5Kick(this);
+		handler.handle(this);
 	}
+	
 }

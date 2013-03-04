@@ -1,4 +1,4 @@
-package cram.pack.dedicatedserver.ser;
+package cram.pack.dedicatedserver.cereal;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

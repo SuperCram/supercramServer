@@ -8,8 +8,8 @@ import cram.pack.dedicatedserver.protocol.Packet;
 import cram.pack.dedicatedserver.protocol.Packet0StatusRequest;
 import cram.pack.dedicatedserver.protocol.Packet1Status;
 import cram.pack.dedicatedserver.protocol.Packet2Login;
-import cram.pack.dedicatedserver.protocol.Packet3LoginFailed;
-import cram.pack.dedicatedserver.protocol.Packet4LoginSucess;
+import cram.pack.dedicatedserver.protocol.Packet3Kick;
+import cram.pack.dedicatedserver.protocol.Packet5LoginSucess;
 
 public class NetLoginHandler extends Thread
 {
@@ -59,39 +59,34 @@ public class NetLoginHandler extends Thread
 			else if(p instanceof Packet2Login)
 			{
 				Packet2Login p2l = (Packet2Login)p;
-				if(p2l.ProtocolVersion!=ProtocolVersion)
+				if(p2l.protocolVersion!=ProtocolVersion)
 				{
-					Packet3LoginFailed p3lf = new Packet3LoginFailed();
-					p3lf.reason = "Outdated "+(ProtocolVersion>p2l.ProtocolVersion ? "Client!" : "Server!");
+					Packet3Kick p3lf = new Packet3Kick();
+					p3lf.reason = "Outdated "+(ProtocolVersion>p2l.protocolVersion ? "Client!" : "Server!");
 					p = p3lf;
 				}
 				else
 				{
 					byte b = server.getConfiguration().checkLogin(p2l.username, p2l.password);
-					// 3 - Bad Both
-					// 4 - Valid
-					// 5 - Admin
-					if(b<4)
+					// 1 - Bad Username
+					// 2 - Bad Password
+					// 3 - Sucess
+					if(b==3)
 					{
-						Packet3LoginFailed p3lf = new Packet3LoginFailed();
-						if(b==1)
-							p3lf.reason = "Unknown username";
-						else if(b==2)
-							p3lf.reason = "Wrong password";
-						else if(b==3)
-							p3lf.reason = "Bad login details";
-						p = p3lf;
+						Packet5LoginSucess p4ls=new Packet5LoginSucess();
+						p = p4ls;
+						NetServerHandler nsh = new NetServerHandler(server, socket, p2l.username);
+						CRAMTheServer.pendingConnections.add(nsh);
 					}
 					else
 					{
-						Packet4LoginSucess p4ls=new Packet4LoginSucess();
-						p4ls.isAdmin = (b==5);
-						p = p4ls;
-						
-						Player player = new Player(p2l.username, b==5);
-						NetServerHandler nsh = new NetServerHandler(player, socket, p2l.username);
-						CRAMTheServer.pendingConnections.add(nsh);
-					} 
+						Packet3Kick p3lf = new Packet3Kick();
+						if(b==1)
+							p3lf.reason = "Unknown Username";
+						else
+							p3lf.reason = "Bad Password";
+						p = p3lf;
+					}
 				}
 			}
 			else

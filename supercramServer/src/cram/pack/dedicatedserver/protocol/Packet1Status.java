@@ -11,16 +11,15 @@ public class Packet1Status extends Packet
 	public Packet1Status() {
 		PacketID = 1;
 	}
-	public int ServerVersion;
-	public int ProtocolVersion;
+	public int ServerVersion = 1;
+	public int ProtocolVersion = 1;
 	public String ServerName = "";
-	public int Players;
-	public int MaxPlayers;
+	public int Players = 0;
+	public int MaxPlayers = 0;
 	
 	@Override
 	void write(DataOutputStream dos) throws IOException
 	{
-		super.write(dos);
 		dos.writeInt(ServerVersion);
 		dos.writeInt(ProtocolVersion);
 		dos.writeInt(ServerName.length());
@@ -31,7 +30,6 @@ public class Packet1Status extends Packet
 	}
 	@Override
 	void read(DataInputStream dis) throws IOException {
-		super.read(dis);
 		ServerVersion = dis.readInt();
 		ProtocolVersion = dis.readInt();
 		int len = dis.readInt();
@@ -43,6 +41,6 @@ public class Packet1Status extends Packet
 	}
 	@Override
 	public void handle(NetServerHandler handler) {
-		handler.handlePacket1Status(this);
+		handler.handle(this);
 	}
 }
