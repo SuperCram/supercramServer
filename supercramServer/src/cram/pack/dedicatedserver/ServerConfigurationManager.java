@@ -8,11 +8,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 public class ServerConfigurationManager
 {
-	public ServerConfigurationManager(File file)
+	private final static Logger LOGGER = Logger.getLogger(ServerConfigurationManager.class.getSimpleName());
+	String serverName;
+	public ServerConfigurationManager(String serverName, File file)
 	{
+		this.serverName = serverName;
+		LOGGER.info("Loading server "+serverName);
 		if(file==null)
 			throw new IllegalArgumentException("Server path doesn't exist");
 		if(!file.exists())
@@ -138,9 +143,16 @@ public class ServerConfigurationManager
 		{
 			File worldsFolder = new File(serverPath, "worlds");
 			for(File file : worldsFolder.listFiles())
+			{
 				if(file.exists() && !file.isDirectory() && file.canRead() && file.getName().endsWith(".scw"))
+				{
 					files.add(file);
+				}
+			}
 		}
-		return (File[])files.toArray();
+		return files.toArray(new File[0]);
+	}
+	public String getName() {
+		return serverName;
 	}
 }

@@ -27,6 +27,11 @@ public class TagString extends Tag
 	@Override
 	public void write(DataOutputStream dos) throws IOException {
 		dos.writeInt(s.length());
-		dos.writeChars(s);
+		for(int i=0;i<s.length();i++)
+			dos.writeChar(s.charAt(i));
+	}
+	public String get()
+	{
+		return s;
 	}
 }

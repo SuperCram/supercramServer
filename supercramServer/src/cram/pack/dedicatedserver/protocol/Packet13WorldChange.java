@@ -12,6 +12,10 @@ public class Packet13WorldChange extends Packet
 	public Packet13WorldChange(String pWorldName)
 	{
 		worldName = pWorldName;
+		PacketID = 13;
+	}
+	public Packet13WorldChange() {
+		PacketID = 13;
 	}
 	@Override
 	void read(DataInputStream dis) throws IOException {
@@ -32,5 +36,8 @@ public class Packet13WorldChange extends Packet
 	public void handle(NetServerHandler handler) {
 		handler.handle(this);
 	}
-	
+	@Override
+	public String toString() {
+		return "Packet13WorldChange(worldName="+worldName+")";
+	}
 }

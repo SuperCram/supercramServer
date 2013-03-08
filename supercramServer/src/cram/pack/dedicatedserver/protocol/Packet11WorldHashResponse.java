@@ -16,6 +16,7 @@ public class Packet11WorldHashResponse extends Packet
 	}
 	public Packet11WorldHashResponse(String pWorldName, String pWorldHash)
 	{
+		PacketID = 11;
 		worldName = pWorldName;
 		worldHash = pWorldHash;
 	}
@@ -44,5 +45,10 @@ public class Packet11WorldHashResponse extends Packet
 	@Override
 	public void handle(NetServerHandler handler) {
 		handler.handle(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "Packet11WorldHashResponse(worldName="+worldName+",worldHash="+worldHash+")";
 	}
 }

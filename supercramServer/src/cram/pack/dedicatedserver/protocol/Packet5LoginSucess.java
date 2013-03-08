@@ -14,7 +14,6 @@ public class Packet5LoginSucess extends Packet {
 	public Packet5LoginSucess(String reason2) {
 		PacketID=5;
 	}
-	String reason = "";
 	@Override
 	void read(DataInputStream dis) throws IOException {}
 	@Override

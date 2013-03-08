@@ -15,6 +15,7 @@ public class Packet10WorldHashRequest extends Packet
 	}
 	public Packet10WorldHashRequest(String name)
 	{
+		PacketID = 10;
 		worldName = name;
 	}
 	@Override
@@ -35,6 +36,11 @@ public class Packet10WorldHashRequest extends Packet
 	@Override
 	public void handle(NetServerHandler handler) {
 		handler.handle(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "Packet10WorldHashRequest(worldName="+worldName+")";
 	}
 	
 }

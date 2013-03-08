@@ -51,7 +51,7 @@ public class TagMap extends Tag
 	}
 	public Tag get(String key)
 	{
-		if(tags!=null && tags.isEmpty())
+		if(tags!=null && !tags.isEmpty())
 			return tags.get(key);
 		else
 			return null;
@@ -69,8 +69,7 @@ public class TagMap extends Tag
 			String key = "";
 			for(int j=0;j<nextStringSize;j++)
 				key += dis.readChar();
-			Tag nextTag = Tag.createTag(dis);
-			nextTag.read(dis);
+			Tag nextTag = Tag.readTag(dis);
 			tags.put(key, nextTag);
 		}
 	}
@@ -82,7 +81,7 @@ public class TagMap extends Tag
 		{
 			String key = tag.getKey();
 			dos.writeInt(key.length());
-			dos.writeBytes(key);
+			dos.writeChars(key);
 			dos.writeByte(tag.getValue().id);
 			tag.getValue().write(dos);
 		}

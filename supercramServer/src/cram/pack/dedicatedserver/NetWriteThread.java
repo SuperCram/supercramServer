@@ -21,7 +21,6 @@ public class NetWriteThread extends Thread
 	{
 		handler = n;
 		dos = d;
-		start();
 	}
 	public void run()
 	{
@@ -32,25 +31,29 @@ public class NetWriteThread extends Thread
 				continue;
 			try
 			{
+				//System.out.println("Sending packet: "+p);
 				dos.writeByte(p.PacketID);
 				p.writeDOS(dos);
+				dos.flush();
 			}
 			catch(EOFException e)
 			{
-				handler.disconnected = true;
+				handler.kick("End of readable Stream");
 				return;
 			}
 			catch(IOException e)
 			{
-				handler.disconnected = true;
+				handler.kick("End of Stream");
 				return;
 			}
 			catch(Exception e)
 			{
-				handler.kick("Protocol Error! Failed to send packet: "+p.PacketID);
+				handler.kick("Protocol Error! Failed to send packet: "+p);
+				e.printStackTrace();
 				return;
 			}
 		}
+		System.out.println("NetWriteThread shut down");
 	}
 	public void close() {
 		

@@ -17,7 +17,8 @@ public class Tag
 	public void write(DataOutputStream dos) throws IOException {}
 	public static Tag createTag(DataInputStream dis) throws IOException
 	{
-		switch(dis.readByte())
+		byte b = dis.readByte();
+		switch(b)
 		{
 		case 1:
 			return new TagByte((byte)1);
@@ -31,7 +32,10 @@ public class Tag
 			return new TagFloat();
 		case 6:
 			return new TagStaticList();
+		case 7:
+			return new TagMap();
 		}
+		System.out.println("Unknown Tag By Index: "+b);
 		return null;
 	}
 	public static Tag readTag(DataInputStream dis) throws IOException

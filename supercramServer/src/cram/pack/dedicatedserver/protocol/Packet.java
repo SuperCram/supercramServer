@@ -9,7 +9,15 @@ import cram.pack.dedicatedserver.NetServerHandler;
 public abstract class Packet
 {
 	public int PacketID = -1;
-	public static Packet readPacket(byte b)
+	public static Packet readPacket(DataInputStream dis) throws IOException
+	{
+		Packet p = createPacket(dis.readByte());
+		if(p==null)
+			return null;
+		p.readDIS(dis);
+		return p;
+	}
+	public static Packet createPacket(byte b)
 	{
 		switch(b)
 		{
@@ -27,6 +35,16 @@ public abstract class Packet
 			return new Packet5LoginSucess();
 		case 6:
 			return new Packet6KeepAlive();
+		case 10:
+			return new Packet10WorldHashRequest();
+		case 11:
+			return new Packet11WorldHashResponse();
+		case 12:
+			return new Packet12WorldData();
+		case 13:
+			return new Packet13WorldChange();
+		case 14:
+			return new Packet14WorldDidChange();
 		default:
 			return null;
 		}

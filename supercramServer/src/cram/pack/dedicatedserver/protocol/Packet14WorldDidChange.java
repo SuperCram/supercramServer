@@ -15,6 +15,7 @@ public class Packet14WorldDidChange extends Packet
 	}
 	public Packet14WorldDidChange(String pWorldName)
 	{
+		PacketID = 14;
 		worldName = pWorldName;
 	}
 	@Override
@@ -35,6 +36,11 @@ public class Packet14WorldDidChange extends Packet
 	@Override
 	public void handle(NetServerHandler handler) {
 		handler.handle(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "Packet14WorldDidChange(worldName="+worldName+")";
 	}
 	
 }

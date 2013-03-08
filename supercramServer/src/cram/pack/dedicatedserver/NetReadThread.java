@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import cram.pack.dedicatedserver.protocol.Packet;
 
-public class NetReadThread
+public class NetReadThread extends Thread
 {
 	private ConcurrentLinkedQueue<Packet> recvQueue = new ConcurrentLinkedQueue<Packet>();
 	public void addPacket(Packet p)
@@ -33,7 +33,8 @@ public class NetReadThread
 			Packet p = null;
 			try
 			{
-				p = Packet.readPacket(dis.readByte());
+				p = Packet.readPacket(dis);
+				System.out.println("Received packet: "+p);
 				if(p!=null)
 					addPacket(p);
 				else
@@ -41,13 +42,13 @@ public class NetReadThread
 			}
 			catch(EOFException e)
 			{
-				handler.disconnected = true;
+				handler.kick("End of readable Stream");
 				return;
 			}
 			catch(IOException e)
 			{
-				handler.disconnected = true;
-				return;
+				
+				continue;
 			}
 			catch(Exception e)
 			{

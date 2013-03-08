@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import cram.pack.dedicatedserver.SupercramServer;
 
 public class ServerManager
 {
@@ -26,7 +27,7 @@ public class ServerManager
 			}
 			try
 			{
-				ServerConfigurationManager cfg = new ServerConfigurationManager(new File(".",args[i]));
+				ServerConfigurationManager cfg = new ServerConfigurationManager(args[i], new File(".",args[i]));
 				servers.add(new SupercramServer(cfg));
 			}
 			catch(ServerFailedToStartException e)
@@ -51,11 +52,15 @@ public class ServerManager
 			System.out.println("No servers started!");
 			return;
 		}
-		if(!noThread)
+		if(noThread)
 		{
 			Iterator<SupercramServer> servI = servers.iterator();
 			while(servI.hasNext())
+			{
 				servI.next().start();
+				System.out.println("PLAYER ADDED TO SERVER");
+			}
+			
 		}
 		threadConsoleForever();
 	}
