@@ -34,7 +34,7 @@ public class NetReadThread extends Thread
 			try
 			{
 				p = Packet.readPacket(dis);
-				System.out.println("Received packet: "+p);
+				//System.out.println("Received packet: "+p);
 				if(p!=null)
 					addPacket(p);
 				else

@@ -9,16 +9,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-import javax.swing.JFrame;
+import cram.pack.dedicatedserver.leveleditor.LevelEditor;
 
 public class SupercramServer extends Thread
 {
 	private Logger LOGGER = null;
 	public SupercramServer(ServerConfigurationManager cfg) throws IOException
 	{
-		
-		
-		
 		LOGGER = Logger.getLogger(cfg.getName());
 		config=cfg;
 		manager = new ConnectionManager(this);
@@ -74,19 +71,19 @@ public class SupercramServer extends Thread
 		return worlds.get(0);
 	}
 	public final boolean ShutdownServer = false;
-	public static final int targetFPS = 39;
-	public static final int tickDelay = (int)(((float)1000/targetFPS));
 	public AtomicInteger fps = new AtomicInteger();
-	private long lastTick = -1;
 	
 	long lastLoopTime = System.nanoTime();
-	final int TARGET_FPS = 40;
+	final int TARGET_FPS = 39;
 	final long OPTIMAL_TIME = 1000000000 / TARGET_FPS;
 	void tickRateManage()
 	{
 		//long currentTick = System.nanoTime();
 		//long callingDelay = currentTick-lastLoopTime;
-		try{Thread.sleep( (lastLoopTime-System.nanoTime() + OPTIMAL_TIME)/1000000);}catch(Exception e){}
+		long nanos = (lastLoopTime-System.nanoTime() + OPTIMAL_TIME);
+		long milis = nanos/1000000;
+		nanos = (milis*1000000)/1000;
+		try{Thread.sleep(milis,(int)nanos);}catch(Exception e){}
 		lastLoopTime = System.nanoTime();
 		
 
@@ -102,7 +99,6 @@ public class SupercramServer extends Thread
 		File[] worldFiles = config.getWorldFiles();
 		for(File worldFile : worldFiles)
 		{
-			
 			World w = null;
 			try{w = new World(this,worldFile);}catch(Exception e){e.printStackTrace();}
 			if(w!=null)

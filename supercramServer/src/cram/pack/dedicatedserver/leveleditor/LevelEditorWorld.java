@@ -10,19 +10,16 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import cram.pack.dedicatedserver.WorldSprite;
 import cram.pack.dedicatedserver.cereal.Tag;
 import cram.pack.dedicatedserver.cereal.TagArrayList;
 import cram.pack.dedicatedserver.cereal.TagMap;
@@ -37,19 +34,15 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 	ArrayList<LevelEditorPoint> playerSpawns = new ArrayList<LevelEditorPoint>();
 	ArrayList<LevelEditorPoint> mobSpawns = new ArrayList<LevelEditorPoint>();
 	ArrayList<LevelEditorZone> crateSpawnZones = new ArrayList<LevelEditorZone>();
-	
-	ArrayList<LevelEditorWorldSprite> clips = new ArrayList<LevelEditorWorldSprite>();
-	ArrayList<LevelEditorWorldSprite> triggers = new ArrayList<LevelEditorWorldSprite>();
-	ArrayList<LevelEditorWorldSprite> backgrounds = new ArrayList<LevelEditorWorldSprite>();
-	ArrayList<LevelEditorWorldSprite> foregrounds = new ArrayList<LevelEditorWorldSprite>();
+	ArrayList<LevelEditorWorldSprite> sprites = new ArrayList<LevelEditorWorldSprite>();
 	
 	float gravity = 0;
 	int enemySpawnDelay = 0;
 	
 	TagMap worldTagMap = null;
 	File worldFile = null;
-	JFrame mainFrame = null;
-	public LevelEditorWorld(JFrame mainFrame)
+	LevelEditor mainFrame = null;
+	public LevelEditorWorld(LevelEditor mainFrame)
 	{
 		this.mainFrame = mainFrame;
 		addMouseListener(this);
@@ -57,7 +50,7 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 		setPreferredSize(new Dimension(840,640));
 		setSize(840, 640);
 	}
-	public LevelEditorWorld(JFrame mainFrame, File worldFile)
+	public LevelEditorWorld(LevelEditor mainFrame, File worldFile)
 	{
 		this(mainFrame);
 		this.worldFile = worldFile;
@@ -74,17 +67,7 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 				for(Tag aSprite : worldTagMap.getStaticList("spirtes"))
 				{
 					LevelEditorWorldSprite ews = new LevelEditorWorldSprite(this,TagMap.get(aSprite));
-					if(ews.collisions)
-						clips.add(ews);
-					else if(ews.trigger)
-						triggers.add(ews);
-					if(ews.hasImage)
-					{
-						if(ews.background)
-							backgrounds.add(ews);
-						else
-							foregrounds.add(ews);
-					}
+					sprites.add(ews);
 				}
 			}
 			catch(Exception e){}
@@ -93,7 +76,7 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 				for(Tag aPlayerSpawn : worldTagMap.getStaticList("playerSpawns"))
 				{
 					TagStaticList playerSpawn = TagStaticList.getObject(aPlayerSpawn);
-					playerSpawns.add(new LevelEditorPoint(playerSpawn.getInt(0),playerSpawn.getInt(1)));
+					playerSpawns.add(new LevelEditorPoint(true,playerSpawn.getInt(0),playerSpawn.getInt(1)));
 				}
 			}
 			catch(Exception e){}
@@ -111,7 +94,7 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 				for(Tag aCrateSpawnZones : worldTagMap.getStaticList("crateSpawnZones"))
 				{
 					TagStaticList playerSpawn = TagStaticList.getObject(aCrateSpawnZones);
-					crateSpawnZones.add(new LevelEditorZone(this,playerSpawn.getInt(0),playerSpawn.getInt(1),playerSpawn.getInt(2),playerSpawn.getInt(3)));
+					crateSpawnZones.add(new LevelEditorZone(true,this,playerSpawn.getInt(0),playerSpawn.getInt(1),playerSpawn.getInt(2),playerSpawn.getInt(3)));
 				}
 			}catch(Exception e){}
 			try { gravity = worldTagMap.getFloat("gravity"); } catch(Exception e) { }
@@ -136,34 +119,38 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 		 * foregrounds
 		 */
 		if(drawBackground)
-			clickableElements.addAll(backgrounds);
+			for(LevelEditorWorldSprite sprite : sprites)
+				if(sprite.hasImage && sprite.background && !clickableElements.contains(sprite))
+					clickableElements.add(sprite);
 		if(drawClips)
-			clickableElements.addAll(clips);
+			for(LevelEditorWorldSprite sprite : sprites)
+				if(sprite.collisions && !clickableElements.contains(sprite))
+					clickableElements.add(sprite);
 		if(drawTriggers)
-			clickableElements.addAll(triggers);
+			for(LevelEditorWorldSprite sprite : sprites)
+				if(sprite.trigger && !clickableElements.contains(sprite))
+					clickableElements.add(sprite);
+		if(drawTriggers)
+			for(LevelEditorWorldSprite sprite : sprites)
+				if(sprite.trigger && !clickableElements.contains(sprite))
+					clickableElements.add(sprite);
 		if(drawCrateSpawnZones)
+		{
 			clickableElements.addAll(crateSpawnZones);
+		}
 		if(drawPlayerSpawns)
 			clickableElements.addAll(playerSpawns);
 		if(drawMobSpawns)
 			clickableElements.addAll(mobSpawns);
 		if(drawForegrounds)
-			clickableElements.addAll(foregrounds);
+			for(LevelEditorWorldSprite sprite : sprites)
+				if(sprite.hasImage && !sprite.background && !clickableElements.contains(sprite))
+					clickableElements.add(sprite);
 	}
 	void updateSprite(LevelEditorWorldSprite el)
 	{
 		deleteElement(el);
-		if(el.trigger)
-			triggers.add(el);
-		if(el.collisions)
-			clips.add(el);
-		if(el.hasImage)
-		{
-			if(el.background)
-				backgrounds.add(el);
-			else
-				foregrounds.add(el);
-		}
+		sprites.add(el);
 		recompileElements();
 	}
 	void updatePlayerSpawn(LevelEditorPoint el)
@@ -194,13 +181,7 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 		tagMap.setString("hash", hash);
 		
 		TagArrayList tl = new TagArrayList();
-		for(LevelEditorWorldSprite z : clips)
-			tl.add(z.toTag());
-		for(LevelEditorWorldSprite z : triggers)
-			tl.add(z.toTag());
-		for(LevelEditorWorldSprite z : backgrounds)
-			tl.add(z.toTag());
-		for(LevelEditorWorldSprite z : foregrounds)
+		for(LevelEditorWorldSprite z : sprites)
 			tl.add(z.toTag());
 		tagMap.put("spirtes", tl);
 		
@@ -224,7 +205,8 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 		return tagMap;
 	}
 	LinkedList<LevelEditorSelectable> clickableElements = new LinkedList<LevelEditorSelectable>();
-	public boolean drawBackground = false;
+	public boolean render = false;
+	public boolean drawBackground = true;
 	public boolean drawClips = true;
 	public boolean drawTriggers = true;
 	public boolean drawCrateSpawnZones = true;
@@ -239,66 +221,19 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 	boolean grid = true;
 	
 	public void draw(Graphics g) {
-		
 		g.clearRect(0, 0, 840, 640);
 		g.setColor(Color.BLACK);
 		g.drawRect(20, 20, 800, 600);
-		if(drawBackground)
-		{
-			g.setColor(Color.GREEN);
-			for(LevelEditorWorldSprite ews : backgrounds)
-				if(ews!=selection)
-					ews.draw(g);
-		}
-		if(drawClips)
-		{
-			g.setColor(Color.GREEN);
-			for(LevelEditorWorldSprite ews : clips)
-				if(ews!=selection)
-					ews.draw(g);
-		}
-		if(drawTriggers)
-		{
-			g.setColor(Color.MAGENTA);
-			for(LevelEditorWorldSprite ews : triggers)
-				if(ews!=selection)
-					ews.draw(g);
-		}
-		if(drawCrateSpawnZones)
-		{
-			g.setColor(Color.ORANGE);
-			for(LevelEditorZone ews : crateSpawnZones)
-				if(ews!=selection)
-					ews.draw(g);
-		}
-		if(drawPlayerSpawns)
-		{
-			g.setColor(Color.BLUE);
-			for(LevelEditorPoint p : playerSpawns)
-				if(p!=selection)
-					p.draw(g);
-		}
-		if(drawMobSpawns)
-		{
-			g.setColor(Color.RED);
-			for(LevelEditorPoint p : mobSpawns)
-				if(p!=selection)
-					p.draw(g);
-		}
-		if(drawForegrounds)
-		{
-			g.setColor(Color.GREEN);
-			for(LevelEditorWorldSprite ews : foregrounds)
-				if(ews!=selection)
-					ews.draw(g);
-		}
-		
+		for(LevelEditorSelectable ews : clickableElements)
+			if(ews!=selection)
+				ews.draw(g);
 		if(selection!=null)
 			selection.draw(g);
 	}
 	@Override
 	public void mouseClicked(MouseEvent paramMouseEvent) {
-		
+		if(paramMouseEvent.getClickCount()==2 && selection!=null)
+			selection.doubleClick(0, 0);
 	}
 	@Override
 	public void mousePressed(MouseEvent paramMouseEvent) {
@@ -376,31 +311,9 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 				if(it2.next()==el)
 					it2.remove();
 		}
-		Iterator<LevelEditorWorldSprite> it3 = null;
-		if(!clips.isEmpty())
+		if(!sprites.isEmpty())
 		{
-			it3 = clips.iterator();
-			while(it3.hasNext())
-				if(it3.next()==el)
-					it3.remove();
-		}
-		if(!triggers.isEmpty())
-		{
-			it3 = triggers.iterator();
-			while(it3.hasNext())
-				if(it3.next()==el)
-					it3.remove();
-		}
-		if(!backgrounds.isEmpty())
-		{
-			it3 = backgrounds.iterator();
-			while(it3.hasNext())
-				if(it3.next()==el)
-					it3.remove();
-		}
-		if(!foregrounds.isEmpty())
-		{
-			it3 = foregrounds.iterator();
+			Iterator<LevelEditorWorldSprite> it3 = sprites.iterator();
 			while(it3.hasNext())
 				if(it3.next()==el)
 					it3.remove();
@@ -419,7 +332,7 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 	public void keyReleased(KeyEvent paramKeyEvent) {
 		if(paramKeyEvent.getKeyCode()==KeyEvent.VK_B)
 		{
-			bounds = !bounds;
+			setBounds(!bounds);
 		}
 		else if(paramKeyEvent.getKeyCode()==KeyEvent.VK_SPACE)
 		{
@@ -444,15 +357,15 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 		{
 			switch(paramKeyEvent.getKeyChar())
 			{
-				case '1': resolution =   1; return;
-				case '2': resolution =   2; return;
-				case '3': resolution =   4; return;
-				case '4': resolution =   8; return;
-				case '5': resolution =  16; return;
-				case '6': resolution =  32; return;
-				case '7': resolution =  64; return;
-				case '8': resolution = 128; return;
-				case '9': resolution = 256; return;
+				case '1': setResolution(1); return;
+				case '2': setResolution(2); return;
+				case '3': setResolution(4); return;
+				case '4': setResolution(8); return;
+				case '5': setResolution(16); return;
+				case '6': setResolution(32); return;
+				case '7': setResolution(64); return;
+				case '8': setResolution(128); return;
+				case '9': setResolution(256); return;
 			}
 		}
 	}
@@ -475,11 +388,20 @@ public class LevelEditorWorld extends JPanel implements MouseListener,MouseMotio
 			return i;
 		return Math.round(i/resolution) * resolution;
 	}
+	public void setResolution(int i)
+	{
+		resolution = i;
+		mainFrame.updateControls();
+	}
 	public void select(LevelEditorSelectable newSprite) {
 		if(selection!=null)
 			selection.setSelected(false, 0, 0);
 		selection = newSprite;
 		selection.setSelected(true, 0, 0);
 		selection.mouseUp();
+	}
+	public void setBounds(boolean b) {
+		bounds = b;
+		mainFrame.updateControls();
 	}
 }

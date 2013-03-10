@@ -30,7 +30,11 @@ public class TagFloat extends Tag
 	public void write(DataOutputStream dos) throws IOException {
 		dos.writeFloat(data);
 	}
-	public float get() {
-		return data;
+	public float get(){return data;}
+	public static float get(Tag tb) { return ((TagFloat)tb).get(); }
+	public static TagFloat get(float b) { return new TagFloat(b); }
+	@Override
+	public String toString() {
+		return data+"f";
 	}
 }

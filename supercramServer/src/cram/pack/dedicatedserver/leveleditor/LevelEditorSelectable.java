@@ -12,5 +12,6 @@ public interface LevelEditorSelectable {
 	public void mouseMove(int x,int y);
 	public int updateCursor(JFrame mainFrame, int x, int y);
 	public void draw(Graphics g);
+	public void doubleClick(int x, int y);
 }
 

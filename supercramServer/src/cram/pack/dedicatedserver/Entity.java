@@ -8,12 +8,19 @@ public class Entity
 	{
 		return ent.aabb.intersects(aabb);
 	}
-	double motX = 0;
-	double motY = 0;
+	boolean forceUpdateX = false;
+	boolean forceUpdateY = false;
+	boolean forceUpdateMotX = false;
+	boolean forceUpdateMotY = false;
+	
+	
+	float motX = 0;
+	float motY = 0;
 	boolean clipping = true;
 	boolean gravity = true;
 	boolean deleted = false;
 	boolean onGround = false;
+	boolean facingRight = true;
 	int UID = -1;
 	Rectangle aabb = null;
 	World world = null;
@@ -28,7 +35,11 @@ public class Entity
 	}
 	public boolean[] update()
 	{
-		
+		forceUpdateX = false;
+		forceUpdateY = false;
+		forceUpdateMotX = false;
+		forceUpdateMotY = false;
+		float lastMotY = motY;
 		if(gravity)
 			motY += world.getGravity();
 		boolean hitH = false;
@@ -44,12 +55,16 @@ public class Entity
 					if(motX>0)
 					{
 						aabb.x = sprite.x-aabb.width;
+						forceUpdateX = true;
 						motX = 0;
+						forceUpdateMotX = true;
 					}
 					if(motX<0)
 					{
 						aabb.x = sprite.x+sprite.width;
+						forceUpdateX = true;
 						motX = 0;
+						forceUpdateMotX = true;
 					}
 				}
 				if(sprite.intersects(aabb.x, aabb.y+motY, aabb.width, aabb.height))
@@ -58,12 +73,18 @@ public class Entity
 					if(motY>0)
 					{
 						aabb.y = sprite.y-aabb.height;
+						forceUpdateY = true;
+						if(lastMotY!=0)
+							forceUpdateMotY = true;
 						motY = 0;
 					}
 					if(motY<0)
 					{
 						aabb.y = sprite.y+sprite.height;
+						if(lastMotY!=0)
+							forceUpdateMotY = true;
 						motY = 0;
+						forceUpdateY = true;
 						onGround = true;
 					}
 				}
@@ -81,6 +102,7 @@ public class Entity
 		{
 			aabb.y = 200;
 			motY = 0;
+			forceUpdateMotY = true;
 		}
 		return new boolean[]{hitH, hitV};
 	}

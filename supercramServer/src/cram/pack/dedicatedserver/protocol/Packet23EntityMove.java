@@ -33,5 +33,8 @@ public class Packet23EntityMove extends Packet {
 	public void handle(NetServerHandler handler) {
 		handler.handle(this);
 	}
-	
+	@Override
+	public String toString() {
+		return "Packet23EntityMove(UID="+UID+",ept="+ept+")";
+	}
 }

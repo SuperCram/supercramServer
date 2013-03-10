@@ -17,7 +17,13 @@ public class LevelEditorZone implements LevelEditorSelectable
 	{
 		world = wld;
 	}
+	boolean isCrateZone = false;
 	LevelEditorWorld world = null;
+	public LevelEditorZone(boolean b, LevelEditorWorld wld, int x, int y, int w, int h)
+	{
+		this(wld,x,y,w,h);
+		isCrateZone = b;
+	}
 	public LevelEditorZone(LevelEditorWorld wld, int x, int y, int w, int h)
 	{
 		this(wld);
@@ -36,6 +42,10 @@ public class LevelEditorZone implements LevelEditorSelectable
 	public boolean isSelected(boolean flag) {
 		return selected;
 	}
+	public void updateSelectionField()
+	{
+		selectionField = new Rectangle(aabb.x-10,aabb.y-10,aabb.width+20,aabb.height+20);
+	}
 	@Override
 	public void setSelected(boolean flag, int x, int y) {
 		if(!flag)
@@ -49,7 +59,7 @@ public class LevelEditorZone implements LevelEditorSelectable
 			startW = aabb.width;
 			startH = aabb.height;
 			
-			selectionField = new Rectangle(aabb.x-10,aabb.y-10,aabb.width+20,aabb.height+20);
+			updateSelectionField();
 			if(aabb.contains(x, y))
 			{
 				dragMoving = true;
@@ -136,28 +146,29 @@ public class LevelEditorZone implements LevelEditorSelectable
 	}
 	public void draw(Graphics g)
 	{
+		if(isCrateZone)
+			g.setColor(Color.orange);
+		g.fillRect(aabb.x+LevelEditor.offsetX,aabb.y+LevelEditor.offsetY,aabb.width,aabb.height);
+		g.setColor(Color.BLACK);
+		g.drawRect(aabb.x+LevelEditor.offsetX,aabb.y+LevelEditor.offsetY,aabb.width,aabb.height);
+		/*
 		if(selected)
 		{
 			
-			Color c = g.getColor();
-			g.setColor(new Color(148,0,211));
-			g.drawRect(selectionField.x+LevelEditor.offsetX, selectionField.y+LevelEditor.offsetY, selectionField.width, selectionField.height);
 			g.setColor(new Color(216,191,216));
 			g.fillRect(aabb.x+LevelEditor.offsetX,aabb.y+LevelEditor.offsetY,aabb.width,aabb.height);
 			g.setColor(Color.BLACK);
 			g.drawRect(aabb.x+LevelEditor.offsetX,aabb.y+LevelEditor.offsetY,aabb.width,aabb.height);
-			
-			g.setColor(c);
 		}
 		else
 		{
-			Color c = g.getColor();
-			g.fillRect(aabb.x+LevelEditor.offsetX,aabb.y+LevelEditor.offsetY,aabb.width,aabb.height);
-			g.setColor(Color.BLACK);
-			g.drawRect(aabb.x+LevelEditor.offsetX,aabb.y+LevelEditor.offsetY,aabb.width,aabb.height);
-			g.setColor(c);
+			
+		}*/
+		if(selected)
+		{
+			g.setColor(new Color(148,0,211));
+			g.drawRect(selectionField.x+LevelEditor.offsetX, selectionField.y+LevelEditor.offsetY, selectionField.width, selectionField.height);
 		}
-		
 	}
 	@Override
 	public int updateCursor(JFrame mainFrame, int x, int y) {
@@ -194,6 +205,11 @@ public class LevelEditorZone implements LevelEditorSelectable
 	public Tag toTag()
 	{
 		return new TagStaticList(new Tag[]{new TagInt(aabb.x),new TagInt(aabb.y),new TagInt(aabb.width),new TagInt(aabb.height)});
+	}
+	@Override
+	public void doubleClick(int x, int y) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

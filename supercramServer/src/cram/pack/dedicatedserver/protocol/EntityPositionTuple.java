@@ -12,8 +12,8 @@ public class EntityPositionTuple
 	}
 	int x;
 	int y;
-	double motX;
-	double motY;
+	float motX;
+	float motY;
 	byte contents = 0;
 	public EntityPositionTuple setX(int x)
 	{
@@ -27,13 +27,14 @@ public class EntityPositionTuple
 		contents |= 2;
 		return this;
 	}
-	public EntityPositionTuple setMotX(double motX)
+	public EntityPositionTuple setMotX(float motX)
 	{
+		Thread.getAllStackTraces();
 		this.motX=motX;
 		contents |= 4;
 		return this;
 	}
-	public EntityPositionTuple setMotY(double motY)
+	public EntityPositionTuple setMotY(float motY)
 	{
 		this.motY=motY;
 		contents |= 8;
@@ -51,6 +52,13 @@ public class EntityPositionTuple
 		contents |= 32;
 		if(!b)
 			contents ^= 32;
+		return this;
+	}
+	public EntityPositionTuple setFacingRight(boolean b)
+	{
+		contents |= 64;
+		if(!b)
+			contents ^= 64;
 		return this;
 	}
 	public EntityPositionTuple(DataInputStream dis) throws IOException
@@ -73,6 +81,10 @@ public class EntityPositionTuple
 	{
 		return ((contents&32)==32);
 	}
+	public boolean getFacingRight()
+	{
+		return ((contents&64)==64);
+	}
 	public EntityPositionTuple(){}
 	public void write(DataOutputStream dos) throws IOException
 	{
@@ -82,8 +94,8 @@ public class EntityPositionTuple
 		if((contents&2)==2)
 			dos.writeInt(y);
 		if((contents&4)==4)
-			dos.writeFloat((float)motX);
+			dos.writeFloat(motX);
 		if((contents&8)==8)
-			dos.writeFloat((float)motY);
+			dos.writeFloat(motY);
 	}
 }

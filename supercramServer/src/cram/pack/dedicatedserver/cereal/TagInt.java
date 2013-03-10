@@ -21,7 +21,6 @@ public class TagInt extends Tag
 		id=(byte)3;
 		data=i;
 	}
-	public int get(){return data;}
 	public void set(int i){data=i;}
 	int data;
 	@Override
@@ -31,5 +30,14 @@ public class TagInt extends Tag
 	@Override
 	public void write(DataOutputStream dos) throws IOException {
 		dos.writeInt(data);
+	}
+	
+	public int get(){return data;}
+	public static int get(Tag tb) { return ((TagInt)tb).get(); }
+	public static TagInt get(int b) { return new TagInt(b); }
+	
+	@Override
+	public String toString() {
+		return data+"i";
 	}
 }

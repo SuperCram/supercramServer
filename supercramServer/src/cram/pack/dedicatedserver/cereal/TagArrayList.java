@@ -49,4 +49,21 @@ public class TagArrayList extends Tag
 			tags[i].write(dos);
 		}
 	}
+	@Override
+	public String toString() {
+		Tag[] tags = arrayTags.toArray(new Tag[0]);
+		StringBuilder sb = new StringBuilder();
+		sb.append("TagArray(");
+		for(int i=0;i<tags.length;i++)
+		{
+			if(i!=0)
+				sb.append(",");
+			sb.append(tags[i].toString());
+		}
+		return sb.toString()+")";
+	}
+	public void add(Tag tag)
+	{
+		arrayTags.add(tag);
+	}
 }

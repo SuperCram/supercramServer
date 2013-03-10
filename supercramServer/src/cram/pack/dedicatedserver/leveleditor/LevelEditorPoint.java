@@ -12,6 +12,12 @@ import cram.pack.dedicatedserver.cereal.TagStaticList;
 
 public class LevelEditorPoint implements LevelEditorSelectable {
 	int x=0,y=0;
+	boolean playerSpawn = false;
+	public LevelEditorPoint(boolean isPlayerSpawn, int pX, int pY)
+	{
+		this(pX,pY);
+		playerSpawn = isPlayerSpawn;
+	}
 	public LevelEditorPoint(int pX, int pY)
 	{
 		x = pX;
@@ -19,6 +25,10 @@ public class LevelEditorPoint implements LevelEditorSelectable {
 	}
 	public void draw(Graphics g)
 	{
+		if(playerSpawn)
+			g.setColor(Color.blue);
+		else
+			g.setColor(Color.red);
 		g.drawLine(x-10+LevelEditor.offsetX, y+LevelEditor.offsetY, x+10+LevelEditor.offsetX, y+LevelEditor.offsetY);
 		g.drawLine(x+LevelEditor.offsetX, y-10+LevelEditor.offsetY, x+LevelEditor.offsetX, y+10+LevelEditor.offsetY);
 		if(selected)
@@ -66,5 +76,10 @@ public class LevelEditorPoint implements LevelEditorSelectable {
 	public Tag toTag()
 	{
 		return new TagStaticList(new Tag[]{new TagInt(x),new TagInt(y)});
+	}
+	@Override
+	public void doubleClick(int x, int y) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -79,7 +79,7 @@ public class Projectile extends Entity
 		}
 		@Override
 		public boolean[] update() {
-			double lmotX = motX;
+			float lmotX = motX;
 			boolean[] b = super.update();
 			if(b[0])
 			{
@@ -97,10 +97,10 @@ public class Projectile extends Entity
 		}
 	}
 	public static class Grenade extends Projectile{
-		public Grenade(boolean facingRight, int x, int y, double delatMotY) {
+		public Grenade(boolean facingRight, int x, int y, float delatMotY) {
 			super(x,y,16,16);
 			motX = facingRight ? 18 : -18;
-			motY = delatMotY*1.5;
+			motY = (float) (delatMotY*1.5);
 			timer = 1500;
 			impactDestroy = false;
 			creationTime = System.currentTimeMillis();
@@ -111,19 +111,19 @@ public class Projectile extends Entity
 				explode();
 			else
 			{
-				double lMotX = motX;
-				double lMotY = motY;
+				float lMotX = motX;
+				float lMotY = motY;
 				boolean[] b = update();
 				if(b[0])
 				{
-					motX = -lMotX*0.6;
+					motX = (float) (-lMotX*0.6);
 				}
 				if(Math.abs(motX)<0.25)
 					motX = 0;
 				if(b[1])
 				{
 					motX *= 0.75;
-					motY = -lMotY*0.6;
+					motY = (float) (-lMotY*0.6);
 				}
 				return b;
 			}

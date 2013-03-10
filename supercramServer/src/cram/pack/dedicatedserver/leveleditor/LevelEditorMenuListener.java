@@ -22,7 +22,7 @@ public class LevelEditorMenuListener implements ActionListener
 		}
 		else if("openFile".equals(paramActionEvent.getActionCommand()))
 		{
-			JFileChooser s = new JFileChooser();
+			JFileChooser s = new JFileChooser(new File("."));
 			int ret = s.showOpenDialog(levelEditor);
 			if(ret==JFileChooser.APPROVE_OPTION)
 			{
@@ -81,8 +81,38 @@ public class LevelEditorMenuListener implements ActionListener
 			levelEditor.levelEditorWorld.updateCrateSpawn(lep = new LevelEditorZone(levelEditor.levelEditorWorld, 10, 10, 10, 10));
 			levelEditor.levelEditorWorld.select(lep);
 		}
-		
-		
+		else if("updateView".equals(paramActionEvent.getActionCommand()))
+		{
+			levelEditor.updateDrawingControls();
+		}
+		else if("updateView/entity".equals(paramActionEvent.getActionCommand()))
+		{
+			levelEditor.renderCheckbox.setSelected(false);
+			levelEditor.backgroundCheckbox.setSelected(false);
+			levelEditor.clipCheckbox.setSelected(true);
+			levelEditor.triggerCheckbox.setSelected(true);
+			levelEditor.crateSpawnZoneCheckbox.setSelected(true);
+			levelEditor.playerSpawnsCheckbox.setSelected(true);
+			levelEditor.mobSpawnCheckbox.setSelected(true);
+			levelEditor.foregroundCheckbox.setSelected(false);
+			levelEditor.updateDrawingControls();
+		}
+		else if("updateView/graphics".equals(paramActionEvent.getActionCommand()))
+		{
+			levelEditor.renderCheckbox.setSelected(true);
+			levelEditor.backgroundCheckbox.setSelected(true);
+			levelEditor.clipCheckbox.setSelected(false);
+			levelEditor.triggerCheckbox.setSelected(false);
+			levelEditor.crateSpawnZoneCheckbox.setSelected(false);
+			levelEditor.playerSpawnsCheckbox.setSelected(false);
+			levelEditor.mobSpawnCheckbox.setSelected(false);
+			levelEditor.foregroundCheckbox.setSelected(true);
+			levelEditor.updateDrawingControls();
+		}
+		else if(paramActionEvent.getActionCommand().startsWith("setResolution/"))
+			levelEditor.levelEditorWorld.setResolution(Integer.parseInt(paramActionEvent.getActionCommand().replaceFirst("setResolution/", "")));
+		else if(paramActionEvent.getActionCommand().startsWith("setBounds"))
+			levelEditor.levelEditorWorld.setBounds(!levelEditor.levelEditorWorld.bounds);
 	}
 	
 }

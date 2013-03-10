@@ -49,13 +49,6 @@ public class TagMap extends Tag
 		tags.remove(key);
 		return this;
 	}
-	public Tag get(String key)
-	{
-		if(tags!=null && !tags.isEmpty())
-			return tags.get(key);
-		else
-			return null;
-	}
 	Map<String,Tag> tags = null;
 	@Override
 	public void read(DataInputStream dis) throws IOException
@@ -89,4 +82,40 @@ public class TagMap extends Tag
 	public Set<Entry<String,Tag>> entrySet() {
 		return tags.entrySet();
 	}
+	public Tag get(String key)
+	{
+		if(tags!=null && !tags.isEmpty())
+			return tags.get(key);
+		else
+			return null;
+	}
+	public static TagMap get(Tag tag){return (TagMap)tag;}
+	
+	public boolean getBool(String i) { return TagBool.get(get(i)); }
+	public byte getByte(String i) { return TagByte.get(get(i)); }
+	public float getFloat(String i) { return TagFloat.get(get(i)); }
+	public int getInt(String i) { return TagInt.get(get(i)); }
+	public String getString(String i) { return TagString.get(get(i)); }
+	public Tag[] getStaticList(String i) { return TagStaticList.get(get(i)); }
+	public TagMap getMap(String i) { return TagMap.get(get(i)); }
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("TagMap(");
+		for(Entry<String,Tag> entry : entrySet())
+			sb.append(entry.getKey()+":"+entry.getValue()+",");
+		return sb.toString()+")";
+	}
+	
+	
+	public TagMap setBool(String key, boolean b) { put(key, new TagBool(b)); return this; }
+	public TagMap setByte(String key, byte b) { put(key, new TagByte(b)); return this; }
+	public TagMap setFloat(String key, float b) { put(key, new TagFloat(b)); return this; }
+	public TagMap setInt(String key, int b) { put(key, new TagInt(b)); return this; }
+	public TagMap setString(String key, String b) { put(key, new TagString(b)); return this; }
+	public TagMap setArray(String key, Tag[] tags) { put(key, new TagStaticList(tags)); return this; }
+	public TagMap setArray(String key, Tag tag) { put(key, (tag instanceof TagStaticList) ? (TagStaticList)tag : ((tag instanceof TagArrayList) ? (TagArrayList)tag : (TagLinkedList)tag)); return this; }
+	public TagMap setMap(String key, Map<String,Tag> tag) { put(key, new TagMap(tag));return this; }
 }

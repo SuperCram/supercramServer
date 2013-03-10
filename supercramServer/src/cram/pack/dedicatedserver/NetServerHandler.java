@@ -125,7 +125,6 @@ public class NetServerHandler
 		}
 	}
 	// Packets
-	
 	NetReadThread reader = null;
 	NetWriteThread writer = null;
 	public boolean disconnected = false;

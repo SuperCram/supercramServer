@@ -31,4 +31,11 @@ public class TagByte extends Tag
 	public void write(DataOutputStream dos) throws IOException {
 		dos.writeByte(data);
 	}
+	public byte get(){return data;}
+	public static byte get(Tag tb) { return ((TagByte)tb).get(); }
+	public static TagByte get(byte b) { return new TagByte(b); }
+	@Override
+	public String toString() {
+		return "0b"+data;
+	}
 }

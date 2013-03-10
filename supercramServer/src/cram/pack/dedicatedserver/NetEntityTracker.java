@@ -12,84 +12,71 @@ public class NetEntityTracker
 {
 	class LastKnown{
 		int x=-54321,y=-54321,flush=-1;
-		double motX=Integer.MIN_VALUE,motY=Integer.MIN_VALUE;
+		float motX=Float.MIN_VALUE,motY=Float.MIN_VALUE;
 		boolean onGround;
 		Entity ent;
+		public EntityPositionTuple createFullEPT()
+		{
+			EntityPositionTuple ept = new EntityPositionTuple();
+			ept.setX(ent.aabb.x);
+			ept.setY(ent.aabb.y);
+			ept.setMotX(ent.motX);
+			ept.setMotY(ent.motY);
+			ept.setOnGround(ent.onGround);
+			ept.setFacingRight(ent.facingRight);
+			
+			x = ent.aabb.x;
+			y = ent.aabb.y;
+			motX = ent.motX;
+			motY = ent.motY;
+			return ept;
+		}
 		public EntityPositionTuple createDeltaEpm()
 		{
-			EntityPositionTuple ept = null;
 			flush--;
 			if(flush<=0)
 			{
 				flush = flushTicks;
-				if(ent.aabb.x!=x)
-				{
-					if(ept==null)
-						ept = new EntityPositionTuple();
-					x = ent.aabb.x;
-					ept.setX(x);
-				}
-				if(ent.aabb.y!=y)
-				{
-					if(ept==null)
-						ept = new EntityPositionTuple();
-					y = ent.aabb.y;
-					ept.setY(y);
-					
-				}
-				if(ent.motX!=motX)
-				{
-					if(ept==null)
-						ept = new EntityPositionTuple();
-					motX = ent.motX;
-					ept.setMotX(motX);
-					
-				}
-				if(ent.motY!=motY)
-				{
-					if(ept==null)
-						ept = new EntityPositionTuple();
-					motY = ent.motY;
-					ept.setMotY(motY);
-				}
+				return createFullEPT();
 			}
-			else
+			EntityPositionTuple ept = null;
+			if(ent.forceUpdateMotX)
 			{
-				if(ent.motX!=motX)
-				{
-					if(ent.aabb.x!=x)
-					{
-						if(ept==null)
-							ept = new EntityPositionTuple();
-						x = ent.aabb.x;
-						ept.setX(x);
-					}
-					if(ept==null)
-						ept = new EntityPositionTuple();
-					motX = ent.motX;
-					ept.setMotX(motX);
-				}
-				if(ent.motY!=motY)
-				{
-					if(ent.aabb.y!=y)
-					{
-						if(ept==null)
-							ept = new EntityPositionTuple();
-						ept.setY(y);
-						y = ent.aabb.y;
-					}
-					if(ept==null)
-						ept = new EntityPositionTuple();
-					motY = ent.motY;
-					ept.setMotY(motY);
-				}
+				if(ept==null)
+					ept = new EntityPositionTuple();
+				motX = ent.motX;
+				ept.setMotX(ent.motX);
+			}
+			if(ent.forceUpdateMotY)
+			{
+				if(ept==null)
+					ept = new EntityPositionTuple();
+				motY = ent.motY;
+				ept.setMotY(ent.motY);
+			}
+			if(ent.forceUpdateX)
+			{
+				if(ept==null)
+					ept = new EntityPositionTuple();
+				x = ent.aabb.x;
+				ept.setX(ent.aabb.x);
+			}
+			if(ent.forceUpdateY)
+			{
+				if(ept==null)
+					ept = new EntityPositionTuple();
+				y = ent.aabb.y;
+				ept.setY(ent.aabb.y);
 			}
 			if(ept!=null)
+			{
 				ept.setOnGround(ent.onGround);
+				ept.setFacingRight(ent.facingRight);
+			}
 			return ept;
 		}
 	}
-	private int flushTicks = 10;
+	private int flushTicks = 20;
 	LinkedList<LastKnown> known = new LinkedList<LastKnown>();
 	private NetServerHandler nsh;
 	public NetEntityTracker(NetServerHandler nsh)

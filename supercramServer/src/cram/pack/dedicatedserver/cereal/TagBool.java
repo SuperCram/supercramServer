@@ -27,4 +27,10 @@ public class TagBool extends Tag
 	public void write(DataOutputStream dos) throws IOException {
 		dos.writeBoolean(b);
 	}
+	public static boolean get(Tag tb) { return ((TagBool)tb).get(); }
+	public static TagBool get(boolean b) { return new TagBool(b); }
+	@Override
+	public String toString() {
+		return Boolean.toString(b);
+	}
 }

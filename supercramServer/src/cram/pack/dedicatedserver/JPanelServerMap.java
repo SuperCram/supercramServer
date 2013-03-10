@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JPanel;
 
@@ -17,6 +18,8 @@ public class JPanelServerMap extends JPanel implements KeyListener, MouseListene
 	{
 		setLocation(0, 0);
 		world = pWorld;
+		setBackground(Color.WHITE);
+		setSize(800, 600);
 	}
 	private static final long serialVersionUID = 8999627801799066274L;
 	@Override
@@ -42,7 +45,13 @@ public class JPanelServerMap extends JPanel implements KeyListener, MouseListene
 			g.drawString("!", selectedEntity.aabb.x, selectedEntity.aabb.y);
 		
 		g.drawString("fps="+world.serv.fps.get(), 100, 100);
+		try{Thread.sleep( (lastLoopTime-System.nanoTime() + OPTIMAL_TIME)/1000000);}catch(Exception e){}
+		lastLoopTime = System.nanoTime();
+		repaint();
 	}
+	long lastLoopTime = System.nanoTime();
+	final int TARGET_FPS = 39;
+	final long OPTIMAL_TIME = 1000000000 / TARGET_FPS;
 	Entity selectedEntity = null;
 	@Override
 	public void keyTyped(KeyEvent e) {}
@@ -51,7 +60,18 @@ public class JPanelServerMap extends JPanel implements KeyListener, MouseListene
 	@Override
 	public void keyReleased(KeyEvent e) {
 		char c = e.getKeyChar();
-		System.out.println("KEY:"+c);
+		switch(c)
+		{
+		case 'c':
+		case 's':
+			key.set(c);
+			break;
+		}
+	}
+	AtomicInteger key = new AtomicInteger();
+	public void processKey()
+	{
+		char c = (char)key.getAndSet(0);
 		switch(c)
 		{
 		case 'c':

@@ -100,19 +100,21 @@ public class World
 		hash = ((TagString)tag.get("hash")).get();
 		
 		JFrame jf = new JFrame(name);
-		jf.setSize(800, 600);
+		//jf.setSize(800, 600);
 		jf.add(worldDebug=new JPanelServerMap(this));
 		jf.addKeyListener(worldDebug);
 		jf.addMouseListener(worldDebug);
-		jf.show();
+		jf.setVisible(true);
 		
 	}
 	private JPanelServerMap worldDebug = null;
 	int worldage = 0;
 	void update()
 	{
+		if(worldDebug!=null)
+			worldDebug.processKey();
 		worldage++;
-		worldDebug.repaint();
+		//worldDebug.repaint();
 		if(!players.isEmpty())
 		{
 			Iterator<Player> playerIterator = players.iterator();
@@ -182,7 +184,12 @@ public class World
 		UID++;
 		if(ent instanceof Player)
 		{
-			players.add((Player)ent);
+			Player player = (Player)ent;
+			player.nsh.entityTracker.clearEntities();
+			for(Entity ent2 : getEntities())
+				player.nsh.entityTracker.addEntity(ent2);
+			players.add(player);
+			
 			System.out.println("PLAYER ADDED TO WORLD");
 			return;
 		}

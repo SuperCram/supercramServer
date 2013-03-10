@@ -9,29 +9,33 @@ public class TagString extends Tag
 	public TagString()
 	{
 		id=(byte)2;
-		s="";
+		data="";
 	}
 	public TagString(String string)
 	{
 		id=(byte)2;
-		s=string;
+		data=string;
 	}
-	String s="";
+	String data="";
 	@Override
 	public void read(DataInputStream dis) throws IOException {
 		int len = dis.readInt();
-		s = "";
+		data = "";
 		for(int i=0;i<len;i++)
-			s += dis.readChar();
+			data += dis.readChar();
 	}
 	@Override
 	public void write(DataOutputStream dos) throws IOException {
-		dos.writeInt(s.length());
-		for(int i=0;i<s.length();i++)
-			dos.writeChar(s.charAt(i));
+		dos.writeInt(data.length());
+		for(int i=0;i<data.length();i++)
+			dos.writeChar(data.charAt(i));
 	}
-	public String get()
-	{
-		return s;
+	public String get(){return data;}
+	public static String get(Tag tb) { return ((TagString)tb).get(); }
+	public static TagString get(String b) { return new TagString(b); }
+	
+	@Override
+	public String toString() {
+		return "\""+data+"\"";
 	}
 }

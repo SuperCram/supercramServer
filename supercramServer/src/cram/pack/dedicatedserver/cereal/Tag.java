@@ -34,6 +34,8 @@ public class Tag
 			return new TagStaticList();
 		case 7:
 			return new TagMap();
+		case 8:
+			return new TagImage();
 		}
 		System.out.println("Unknown Tag By Index: "+b);
 		return null;
